@@ -56,34 +56,45 @@ vim /usr/local/bin/daily-user-log-in.sh
 
 
 # writes current user(s) - START -----------------------------
-who \                                   # who - show who is logged on
-|  awk '{print $1}' \                   # prints 1st column
-| awk '!NF || !seen[$0]++' \            # remove duplicate lines
->> /usr/local/bin/daily-user-log-in.txt # write program to text file.
+# who | \                                   # who - show who is logged on
+# awk '{print $1}' | \                   # prints 1st column
+# awk '!NF || !seen[$0]++' \            # remove duplicate lines
+# >> /usr/local/bin/daily-user-log-in.txt # write program to text file.
+
+who | \
+    awk '{print $1}' | \
+    awk '!NF || !seen[$0]++' \
+    >> /usr/local/bin/daily-user-log-in.txt
 # writes current user(s) - END -----------------------------
 
 
 # user count - START -----------------------------
-echo "$(date +%x) $(date +%A)" \        # "date +%x" - shows date (10/29/2023), "date +%A" - shows day.
+# sorts duplicate lines and exports to daily-user-count.txt file.
+sort -u /usr/local/bin/daily-user-log-in.txt > /usr/local/bin/daily-user-count.txt
+
+# "date +%x" - shows date (10/29/2023), 
+# "date +%A" - shows day.
+# " awk 'END{print NR}' " - counts lines.
+echo "$(date +%x) $(date +%A) \
 - $(hostname) daily user login count is \
-$(awk 'END{print NR}' /usr/local/bin/daily-user-count.txt).     # " awk 'END{print NR}' " - counts lines.
+$(awk 'END{print NR}' /usr/local/bin/daily-user-count.txt)."
 # user count - END -----------------------------
 
 
-# Send email - START ----------------------------- 
-# sending email from terminal, syntax:
-# echo "This is the body of the email" | mail "Subject line" -a /path/to/file.txt  recipient@example.com
+# send email & remove files - START ----------------------------- 
+# if is 20:00, will send email & remove files. 
+if [ $(date +%H) -eq 20 ]; then
 
-echo "$(date +%x) $(date +%A)" - $(hostname) daily user login in count is $(awk 'END{print NR}' /usr/local/bin/daily-user-log-in.txt). | mail -s "Daily user count" root@localhost
+# Send email - START ----------------------------- 
+# echo "This is the body of the email" | mail -s "Subject line" -a /path/to/file.txt  recipient@example.com
+echo "$(date +%x) $(date +%A)" - $(hostname) daily user login in count is $(awk 'END{print NR}' /usr/local/bin/daily-user-log-in.txt). | \
+mail -s "$(hostname) Daily user count" root@localhost
 # Send email - END -----------------------------
 
-
 # Clean up - START -----------------------------
-# Delete a files.
-
-# if is 20:00, will remove files. 
-if [ $(date +%H) -eq 20 ]; then
+    # Delete a files.
     rm /usr/local/bin/daily-user-log-in.txt
     rm /usr/local/bin/daily-user-count.txt
-fi
 # Clean up - END -----------------------------
+fi
+# send email & remove files - END -----------------------------
