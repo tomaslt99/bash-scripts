@@ -121,7 +121,9 @@ echo -e "hostname - $(hostname): \n$(cat /usr/local/bin/user-count/weekly2.txt)"
 
 # Production
 # send an email if it's Friday at 20:00
-#if [ "$(date +%d-%H:%M:%S)" = "15-20:00:00" ]; then
+if [[ $(date +%A) -eq Friday && $(date +%H) -eq 20 ]]; then
+        echo "test-Completed"
+echo "test-Completed" > /usr/local/bin/user-count/test.txt
 
 # Send email - START -----------------------------
 # echo "This is the body of the email" | mail -s "Subject line" -a /path/to/file.txt  recipient@example.com
