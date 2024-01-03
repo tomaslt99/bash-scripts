@@ -165,7 +165,7 @@ if [[ $(date +%A) -eq Friday && $(date +%H) -eq 20 ]]; then
 
 # Clean up - START -----------------------------
     # Delete a files.
-    rm -f /usr/local/bin/user-count/weekly*.txt
+    rm -f /usr/local/bin/user-count/*.txt
 # Clean up - END -----------------------------
 fi
 # send email & remove files - END -----------------------------
