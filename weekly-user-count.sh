@@ -7,11 +7,25 @@
 # e-mail:
 # Purpose:
 # Display daily user login in count.
+# ===================================================
 
 
 
 # Requrement:
-# Before starting program, setup cron job 1st.
+# Before starting program, store & setup cron job 1st.
+
+# ===================================================
+: '
+# Start - store program -----------------------------
+# store the program at /usr/local/bin/user-count
+# " mkdir -p /usr/local/bin/user-count "
+#
+# name it "weekly-user-count.sh"
+vim /usr/local/bin/user-count/weekly-user-count.sh
+# End - store program -----------------------------
+'
+# ===================================================
+
 
 : '
 # Start of Crontab -----------------------------
@@ -44,13 +58,7 @@ crontab -e -u root
 '
 
 
-: '
-# Start of store program -----------------------------
-# store the program at /usr/local/bin/user-count
-# name it "weekly-user-count.sh "
-vim /usr/local/bin/user-count/weekly-user-count.sh
-# End of store program -----------------------------
-'
+
 
 
 # writes current user(s) - START -----------------------------
@@ -107,25 +115,38 @@ awk '{gsub("weekly/", ""); print}' <  weekly1.txt >  weekly2.txt
 
 # send email & remove files - START -----------------------------
 
-# If needed, change the date temporarily on a system.
-# sudo timedatectl set-ntp off
-# sudo date -s "8 DEC 2023 20:00:00"
-# if you reboot system will chnage to correct date.
+##################################
+### - TESTING purpose -  START ###
+
+# change the date & time - START -----------------------------
+    # If needed, change the date temporarily on a system.
+    # if you reboot system will chnage to correct date.
+#sudo timedatectl set-ntp off
+#sudo date -s "8 DEC 2023 20:00:00"
+# change the date & time - END -----------------------------
 
 
-#----start -1
-# daily 20:00 delete files: daily-user-log-in.txt & daily-user-count.txt,
-# if files are not deleted daily, next day files will be appended (data incorrect, corrupt)
-if [ "$(date +%H)" = "20" ]; then
-    rm /usr/local/bin/user-count/daily-user*.txt
-fi
-#----end -1
+
+#---- deleted daily - start
+  # daily 20:00 delete files: daily-user-log-in.txt & daily-user-count.txt,
+  # if files are not deleted daily, next day files will be appended (data incorrect, corrupt)
+#---#---#---#---#---#---#---#---#---#---#---#---
+
+#if [ "$(date +%H)" = "20" ]; then
+#    rm /usr/local/bin/user-count/daily-user*.txt
+#fi
+#---- deleted daily - end
+
+
+### - TESTING purpose -  END   ###
+##################################
 
 #----start -2
 # In the above script, $(date +%u) returns the current day of the week (1-7, Monday-Sunday), 
 # and $(date +%H) returns the current hour in 24-hour format.
 # The if condition checks if the current day is Friday (-eq 5) and the current hour is 8 PM (-eq 20). 
 # If the condition is true, the script runs the commands inside the if block.
+
 #if [[ $(date +%u) -eq 1 && $(date +%H) -eq 20 ]]; then
 #    # Run your script here
 #        echo "test-Completed"
